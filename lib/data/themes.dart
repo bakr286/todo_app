@@ -5,7 +5,7 @@ final ThemeData lightTheme = ThemeData(
   primaryColor: Colors.blue,
   colorScheme: ColorScheme.light(
     primary: Colors.blue,
-    secondary: Colors.lightBlue, // Light theme secondary color
+    secondary: Colors.green,
   ),
 );
 
@@ -14,6 +14,26 @@ final ThemeData darkTheme = ThemeData(
   primaryColor: Colors.purple,
   colorScheme: ColorScheme.dark(
     primary: Colors.purple,
-    secondary: Colors.deepPurple, // Dark theme secondary color
+    secondary: Colors.blue,
   ),
 );
+
+final ThemeData greenLightTheme = ThemeData(
+  brightness: Brightness.light,
+  primaryColor: Colors.green,
+  colorScheme: ColorScheme.light(
+    primary: Colors.green,
+    secondary: Colors.lightBlue,
+  ),
+);
+
+final ThemeData orangeDarkTheme = ThemeData(
+  brightness: Brightness.dark,
+  primaryColor: Colors.orange,
+  colorScheme: ColorScheme.dark(
+    primary: Colors.orange,
+    secondary: Colors.yellow,
+  ),
+);
+
+final List themes = [lightTheme, darkTheme, greenLightTheme, orangeDarkTheme];

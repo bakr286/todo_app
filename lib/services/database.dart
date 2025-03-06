@@ -52,3 +52,7 @@ class TodoDatabase {
     await box.deleteAt(index);
   }
 }
+
+class SettingDatabase{
+  
+}

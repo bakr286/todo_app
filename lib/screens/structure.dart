@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import '../data/task_model.dart';
-import '../services/task_provider.dart';
+import '../services/providers/task_provider.dart';
+import '../services/providers/theme_provider.dart';
+import '../services/providers/timer_provider.dart';
 import 'add.dart';
 import 'home.dart';
 import 'timer.dart';
@@ -15,21 +17,40 @@ class Structure extends StatefulWidget {
 }
 
 int index = 0;
-var tp = TaskProvider();
+var taskProvider = TaskProvider();
+var timerProvider = TimerProvider();
+var themeProvider= ThemeProvider();
 
 class _StructureState extends State<Structure> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<TaskProvider>(
-      builder: (context, tp, child) {
-        IconData? buttonIcon =
-            index == 0
-                ? Icons.add
-                : index == 1
-                ? Icons.check
-                : Icons.access_time_rounded;
-        return Scaffold(
-          floatingActionButton: FloatingActionButton(
+    return Scaffold(
+      floatingActionButton: Consumer<TimerProvider>(
+        builder: (context, timerProvider, child) {
+          IconData buttonIcon;
+          Color buttonColor = Theme.of(context).colorScheme.secondary;
+          switch (index) {
+            case 0:
+              buttonIcon = Icons.add;
+              buttonColor = Colors.red;
+              break;
+            case 1:
+              buttonIcon = Icons.check;
+              buttonColor = Colors.green;
+              break;
+            case 2:
+              buttonIcon = timerProvider.isRunning ? Icons.pause : Icons.play_arrow_sharp;
+              buttonColor =
+                  timerProvider.isRunning
+                      ? Colors.yellow
+                      : Theme.of(context).primaryColor;
+
+              break;
+            default:
+              buttonIcon = Icons.add;
+          }
+          return FloatingActionButton(
+            backgroundColor: buttonColor,
             onPressed: () async {
               switch (index) {
                 case 0:
@@ -45,9 +66,10 @@ class _StructureState extends State<Structure> {
                       title: addScreen.task.title,
                       description: addScreen.task.description,
                       date: addScreen.task.date,
-                      isDone: false
+                      isDone: false,
+                      category: addScreen.task.category,
                     );
-                    await tp.addTask(task);
+                    await taskProvider.addTask(task);
                     addScreen.resetTask();
                     setState(() => index = 0);
                   } else {
@@ -60,29 +82,30 @@ class _StructureState extends State<Structure> {
                   }
                   break;
                 case 2:
+                timerProvider.toggleTimer();
                   break;
                 default:
               }
             },
             child: Icon(buttonIcon),
-          ),
-          body: screens[index],
-          bottomNavigationBar: GNav(
-            tabBackgroundColor: Theme.of(context).colorScheme.secondary,
-            tabs: [
-              GButton(icon: Icons.home, text: 'Home'),
-              GButton(icon: Icons.add),
-              GButton(icon: Icons.timer, text: 'Timer'),
-            ],
-            selectedIndex: index,
-            onTabChange: (idx) {
-              setState(() {
-                index = idx;
-              });
-            },
-          ),
-        );
-      },
+          );
+        },
+      ),
+      body: screens[index],
+      bottomNavigationBar: GNav(
+        tabBackgroundColor: Theme.of(context).colorScheme.secondary,
+        tabs: [
+          GButton(icon: Icons.home, text: 'Home'),
+          GButton(icon: Icons.add, backgroundColor: Colors.red),
+          GButton(icon: Icons.timer, text: 'Timer'),
+        ],
+        selectedIndex: index,
+        onTabChange: (idx) {
+          setState(() {
+            index = idx;
+          });
+        },
+      ),
     );
   }
 }

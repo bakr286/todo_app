@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/services/database.dart';
 import 'package:todo_app/services/notifications.dart';
 
-import '../data/task_model.dart';
+import '../../data/task_model.dart';
 
 class TaskProvider extends ChangeNotifier {
   final TodoDatabase _db = TodoDatabase();
@@ -34,8 +34,8 @@ class TaskProvider extends ChangeNotifier {
   }
 
   Future<void> deleteTask(int index) async {
-    await _db.deleteTodo(index);
     final task = _tasks[index];
+    await _db.deleteTodo(index);
     await _notificationService.cancelNotification(task.hashCode);
     await loadTasks();
     notifyListeners();

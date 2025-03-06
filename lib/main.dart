@@ -1,31 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/services/providers/theme_provider.dart';
 import 'data/themes.dart';
 import 'screens/structure.dart';
 import 'services/database.dart';
-import 'services/task_provider.dart';
-import 'services/notifications.dart';  // Add this import
+import 'services/notifications.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();  // Add this line
-  
-  try {
-    await NotificationService().initializeNotification();
-  } catch (e) {
-    print('Failed to initialize notifications: $e');
-    // Handle permission denied scenario
-  }
-  
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await NotificationService().initializeNotification();
+
   await TodoDatabase().initializeDatabase();
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => TaskProvider()),
-      ],
-      child: const MainApp(),
-    ),
-  );
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
@@ -33,13 +21,20 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Todo App',
-      themeMode: ThemeMode.system,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      debugShowCheckedModeBanner: false,
-      home: Structure(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => taskProvider),
+        ChangeNotifierProvider(create: (_) => timerProvider),
+        ChangeNotifierProvider(create: (_) => themeProvider),
+      ],
+      child: Consumer(
+        builder: (context, ThemeProvider themeProvider, child) => MaterialApp(
+          title: 'Todo App',
+          theme: themeProvider.currentTheme,
+          debugShowCheckedModeBanner: false,
+          home: Structure(),
+        )
+      ),
     );
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/data/categories.dart';
 
 import '../data/task_model.dart';
-import '../services/task_provider.dart';
+import '../services/providers/task_provider.dart';
 
 class AddScreen extends StatefulWidget {
   final formKey = GlobalKey<FormState>();
@@ -75,6 +76,48 @@ class _AddScreenState extends State<AddScreen> {
                     },
                     onSaved: (value) => widget.task.description = value ?? '',
                   ),
+                  DropdownButtonFormField<String>(
+                    value: widget.task.category,
+                    decoration: InputDecoration(
+                      labelText: 'Category',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                    items: Categories.categories.map((category) {
+                      return DropdownMenuItem(
+                        value: category.label,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 16,
+                              height: 16,
+                              decoration: BoxDecoration(
+                                color: category.color,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Text(category.label),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        widget.task.category = value!;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a category';
+                      }
+                      return null;
+                    },
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -94,7 +137,7 @@ class _AddScreenState extends State<AddScreen> {
                         ),
                         child: Text(
                           widget.task.date == DateTime(0)
-                              ? 'No Date Set'
+                              ? 'No Reminder'
                               : widget.task.date.toString().substring(0, 16),
                         ),
                       ),

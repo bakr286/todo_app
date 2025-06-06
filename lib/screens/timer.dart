@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
-import 'package:todo_app/screens/structure.dart';
+import 'package:todo_app/screens/main_screen.dart';
 
 import '../services/providers/timer_provider.dart';
 
@@ -141,10 +141,14 @@ class _TimerScreenState extends State<TimerScreen> {
                 ),
                 customColors: CustomSliderColors(
                   trackColor:
-                      timerProvider.isWorkTime ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.secondary,
+                      timerProvider.isWorkTime
+                          ? Theme.of(context).primaryColor
+                          : Theme.of(context).colorScheme.secondary,
                   progressBarColor: Colors.grey[300]!,
                   dotColor:
-                      timerProvider.isWorkTime ? Theme.of(context).primaryColor : Theme.of(context).secondaryHeaderColor,
+                      timerProvider.isWorkTime
+                          ? Theme.of(context).primaryColor
+                          : Theme.of(context).secondaryHeaderColor,
                 ),
                 infoProperties: InfoProperties(
                   mainLabelStyle: const TextStyle(
@@ -172,32 +176,35 @@ class _TimerScreenState extends State<TimerScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
+            OutlinedButton.icon(
               onPressed: timerProvider.resetTimer,
-              child: const Text('Reset'),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Reset'),
             ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
+                OutlinedButton.icon(
                   onPressed: () => _showCustomTimePickerDialog(context, true),
-                  child: const Text('Work Time'),
+                  icon: const Icon(Icons.edit),
+                  label: const Text('Edit'),
                 ),
                 const SizedBox(width: 10),
-                Text(_formatDuration(timerProvider.workDuration)),
+                Text('Work Time: ${_formatDuration(timerProvider.workDuration)}'),
               ],
             ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
+                OutlinedButton.icon(
                   onPressed: () => _showCustomTimePickerDialog(context, false),
-                  child: const Text('Break Time'),
+                  icon: const Icon(Icons.edit),
+                  label: const Text('Edit'),
                 ),
                 const SizedBox(width: 10),
-                Text(_formatDuration(timerProvider.breakDuration)),
+                Text('Break Time: ${_formatDuration(timerProvider.breakDuration)}'),
               ],
             ),
           ],

@@ -32,7 +32,7 @@ final ThemeData orangeDarkTheme = ThemeData(
   primaryColor: Colors.orange,
   colorScheme: ColorScheme.dark(
     primary: Colors.orange,
-    secondary: Colors.yellow,
+    secondary: Colors.deepOrange
   ),
 );
 

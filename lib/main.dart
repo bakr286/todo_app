@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/services/providers/theme_provider.dart';
-import 'data/themes.dart';
-import 'screens/structure.dart';
-import 'services/database.dart';
+import 'screens/main_screen.dart';
+import 'services/database/tasks_database.dart';
 import 'services/notifications.dart';
 
 void main() async {
@@ -28,12 +27,13 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => themeProvider),
       ],
       child: Consumer(
-        builder: (context, ThemeProvider themeProvider, child) => MaterialApp(
-          title: 'Todo App',
-          theme: themeProvider.currentTheme,
-          debugShowCheckedModeBanner: false,
-          home: Structure(),
-        )
+        builder:
+            (context, ThemeProvider themeProvider, child) => MaterialApp(
+              title: 'Todo App',
+              theme: themeProvider.currentTheme,
+              debugShowCheckedModeBanner: false,
+              home: MainScreen(),
+            ),
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import '../data/task_model.dart';
+import '../../data/task_model.dart';
 
 class TodoDatabase {
   static final TodoDatabase _instance = TodoDatabase._internal();
@@ -53,6 +53,3 @@ class TodoDatabase {
   }
 }
 
-class SettingDatabase{
-  
-}

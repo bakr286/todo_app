@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../data/task_model.dart';
 import '../services/providers/task_provider.dart';
+import 'task_options_menu.dart';
 
 class TaskBuild extends StatefulWidget {
-  const TaskBuild({super.key, required this.task, required this.index});
+  const TaskBuild({Key? key, required this.task, required this.index})
+    : super(key: key);
   final int index;
   final Task task;
 
@@ -36,6 +38,24 @@ class _TaskBuildState extends State<TaskBuild> {
     }
   }
 
+  void showDetails(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(widget.task.title),
+          content: Text(widget.task.description),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -55,25 +75,25 @@ class _TaskBuildState extends State<TaskBuild> {
         ),
       ),
       child: ListTile(
-        onTap: () {
-          showDialog(
-            context: context,
-            builder:
-                (dialogContext) => AlertDialog(
-                  title: Text(widget.task.title),
-                  content: Text(widget.task.description),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(dialogContext),
-                      child: const Text('Close'),
-                    ),
-                  ],
-                ),
-          );
-        },
+        leading: Checkbox(
+          activeColor:
+              widget.task.category == 'Personal'
+                  ? Colors.blue
+                  : widget.task.category == 'Work'
+                  ? Colors.red
+                  : widget.task.category == 'Academic'
+                  ? Colors.green
+                  : Theme.of(context).dividerColor,
+          value: widget.task.isDone,
+          onChanged: (value) {
+            setState(() {
+              widget.task.isDone = value!;
+            });
+            TaskProvider().updateTask(widget.index, widget.task);
+          },
+        ),
         title: Text(widget.task.title),
-
-        trailing: Text(
+        subtitle: Text(
           widget.task.isDone
               ? 'Done'
               : widget.task.date == DateTime(0)
@@ -91,14 +111,12 @@ class _TaskBuildState extends State<TaskBuild> {
                     : Colors.black,
           ),
         ),
-        leading: Checkbox(
-          value: widget.task.isDone,
-          onChanged: (value) {
-            setState(() {
-              widget.task.isDone = value!;
-              TaskProvider().updateTask(widget.index, widget.task);
-            });
+        trailing: IconButton(
+          icon: const Icon(Icons.more_vert),
+          onPressed: () {
+            TaskOptionsMenu.showOptions(context, widget.task, widget.index);
           },
+          color: Theme.of(context).iconTheme.color,
         ),
       ),
     );

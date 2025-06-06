@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
-
 import '../notifications.dart';
+import '../database/settings_database.dart';
 
 class TimerProvider with ChangeNotifier {
-  int _workDuration = 25 * 60; 
-  int _breakDuration = 5 * 60; 
+  int _workDuration = 25 * 60;
+  int _breakDuration = 5 * 60;
   int _secondsElapsed = 0;
   bool _isWorkTime = true;
   bool _isRunning = false;
+
+  final NotificationService _notificationService = NotificationService();
+  final SettingDatabase _settingDatabase = SettingDatabase();
+
+  TimerProvider() {
+    _loadDurations();
+    _initializeNotifications();
+  }
+
+  Future<void> _loadDurations() async {
+    _workDuration = (await _settingDatabase.getWorkTime()) * 60;
+    _breakDuration = (await _settingDatabase.getBreakTime()) * 60;
+    notifyListeners();
+  }
 
   int get workDuration => _workDuration;
   int get breakDuration => _breakDuration;
@@ -15,23 +29,19 @@ class TimerProvider with ChangeNotifier {
   bool get isWorkTime => _isWorkTime;
   bool get isRunning => _isRunning;
 
-  final NotificationService _notificationService = NotificationService();
-
-  TimerProvider() {
-    _initializeNotifications();
-  }
-
   Future<void> _initializeNotifications() async {
     await _notificationService.initializeNotification();
   }
 
-  void setWorkDuration(int seconds) {
+  Future<void> setWorkDuration(int seconds) async {
     _workDuration = seconds;
+    await _settingDatabase.setWorkTime(seconds ~/ 60);
     notifyListeners();
   }
 
-  void setBreakDuration(int seconds) {
+  Future<void> setBreakDuration(int seconds) async {
     _breakDuration = seconds;
+    await _settingDatabase.setBreakTime(seconds ~/ 60);
     notifyListeners();
   }
 
@@ -52,12 +62,11 @@ class TimerProvider with ChangeNotifier {
         _runTimer();
         _updatePersistentNotification();
       } else {
-        // Timer has reached the end of the current phase
         _secondsElapsed = 0;
         _isWorkTime = !_isWorkTime;
         notifyListeners();
         _sendTimerEndNotification();
-        _runTimer(); // Start the next phase
+        _runTimer();
       }
     });
   }
@@ -83,14 +92,14 @@ class TimerProvider with ChangeNotifier {
     );
   }
 
-void _updatePersistentNotification() async {
-  final remainingTime = (_isWorkTime ? _workDuration : _breakDuration) - _secondsElapsed;
-  await _notificationService.updatePersistentNotification(
-    title: _isWorkTime ? 'Work Time' : 'Break Time',
-    body: 'Time left: ${_formatDuration(remainingTime)}',
-    isRunning: _isRunning,
-  );
-}
+  void _updatePersistentNotification() async {
+    final remainingTime = (_isWorkTime ? _workDuration : _breakDuration) - _secondsElapsed;
+    await _notificationService.updatePersistentNotification(
+      title: _isWorkTime ? 'Work Time' : 'Break Time',
+      body: 'Time left: ${_formatDuration(remainingTime)}',
+      isRunning: _isRunning,
+    );
+  }
 
   void toggleTimer() {
     if (_isRunning) {

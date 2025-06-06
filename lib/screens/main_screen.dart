@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import '../data/task_model.dart';
 import '../services/providers/task_provider.dart';
 import '../services/providers/theme_provider.dart';
 import '../services/providers/timer_provider.dart';
-import 'add.dart';
+import 'add_edit_task_screen.dart';
 import 'home.dart';
+import 'settings.dart';
 import 'timer.dart';
 
-class Structure extends StatefulWidget {
-  const Structure({super.key});
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  State<Structure> createState() => _StructureState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
 int index = 0;
 var taskProvider = TaskProvider();
 var timerProvider = TimerProvider();
-var themeProvider= ThemeProvider();
+var themeProvider = ThemeProvider();
 
-class _StructureState extends State<Structure> {
+class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +39,10 @@ class _StructureState extends State<Structure> {
               buttonColor = Colors.green;
               break;
             case 2:
-              buttonIcon = timerProvider.isRunning ? Icons.pause : Icons.play_arrow_sharp;
+              buttonIcon =
+                  timerProvider.isRunning
+                      ? Icons.pause
+                      : Icons.play_arrow_sharp;
               buttonColor =
                   timerProvider.isRunning
                       ? Colors.yellow
@@ -54,35 +57,15 @@ class _StructureState extends State<Structure> {
             onPressed: () async {
               switch (index) {
                 case 0:
-                  setState(() {
-                    index = 1;
-                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddEditTaskScreen(),
+                    ),
+                  );
                   break;
                 case 1:
-                  final addScreen = screens[1] as AddScreen;
-                  if (addScreen.formKey.currentState?.validate() ?? false) {
-                    addScreen.formKey.currentState?.save();
-                    final task = Task(
-                      title: addScreen.task.title,
-                      description: addScreen.task.description,
-                      date: addScreen.task.date,
-                      isDone: false,
-                      category: addScreen.task.category,
-                    );
-                    await taskProvider.addTask(task);
-                    addScreen.resetTask();
-                    setState(() => index = 0);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Please fill all fields'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                  break;
-                case 2:
-                timerProvider.toggleTimer();
+                  timerProvider.toggleTimer();
                   break;
                 default:
               }
@@ -96,8 +79,8 @@ class _StructureState extends State<Structure> {
         tabBackgroundColor: Theme.of(context).colorScheme.secondary,
         tabs: [
           GButton(icon: Icons.home, text: 'Home'),
-          GButton(icon: Icons.add, backgroundColor: Colors.red),
           GButton(icon: Icons.timer, text: 'Timer'),
+          GButton(icon: Icons.settings, text: 'Settings'),
         ],
         selectedIndex: index,
         onTabChange: (idx) {
@@ -110,4 +93,8 @@ class _StructureState extends State<Structure> {
   }
 }
 
-List screens = [HomeScreen(), AddScreen(), TimerScreen()];
+List screens = [
+  HomeScreen(),
+  TimerScreen(),
+  SettingsScreen(),
+]; // Remove AddScreen

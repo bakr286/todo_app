@@ -19,10 +19,7 @@ A versatile and user-friendly Todo application built with Flutter, designed to h
 ## Packages Used
 
 *   `flutter_local_notifications`: For scheduling and displaying local notifications.
-*   `timezone`: For handling time zones to ensure accurate scheduling of notifications.
 *   `provider`: For state management, enabling efficient data sharing and UI updates.
-*   `sqflite`: For local database storage, allowing persistent storage of tasks.
-*   `path_provider`: For determining appropriate locations for storing the database.
 *   `intl`: For formatting dates and times in a user-friendly manner.
 *   `google_nav_bar`: For creating a modern and responsive navigation bar.
 *   `hive_flutter`: For local storage of settings and preferences.
